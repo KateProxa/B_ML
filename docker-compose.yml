@@ -8,12 +8,16 @@ services:
     ports:
        - 5672:5672
        - 15672:15672
+
   features:
     build:
       context: ./features
     restart: always
     depends_on:
       - rabbitmq
+    volumes:
+      - ./logs/:/usr/src/app/logs/
+
   model:
     build:
       context: ./model
@@ -21,6 +25,9 @@ services:
     depends_on:
       - rabbitmq
       - features
+    volumes:
+      - ./logs/:/usr/src/app/logs/
+
   metric:
     build:
       context: ./metric
@@ -31,6 +38,7 @@ services:
       - model
     volumes:
       - ./logs/:/usr/src/app/logs/
+
   plot:
     build:
       context: ./plot
@@ -38,3 +46,5 @@ services:
     depends_on:
       - rabbitmq
       - features
+    volumes:
+      - ./logs/:/usr/src/app/logs/

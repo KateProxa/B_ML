@@ -5,12 +5,13 @@ from sklearn.datasets import load_diabetes
 import time
 from datetime import datetime
 
+# Загружаем датасет о диабете
+X, y = load_diabetes(return_X_y=True)
 
 # Создаём бесконечный цикл для отправки сообщений в очередь
 while True:
     try:
-        # Загружаем датасет о диабете
-        X, y = load_diabetes(return_X_y=True)
+
         # Формируем случайный индекс строки
         random_row = np.random.randint(0, X.shape[0]-1)
         time.sleep(10)
@@ -73,5 +74,7 @@ while True:
 
         # Закрываем подключение
         connection.close()
+        
     except:
         print('Не удалось подключиться к очереди')
+        

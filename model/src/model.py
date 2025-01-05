@@ -21,12 +21,12 @@ try:
     def callback(ch, method, properties, body):
         print(f'Получен вектор признаков {body}')
         response          = json.loads(body.decode('utf-8'))
-        response_features = np.array(response['body'], dtype=float).reshape(1, -1)
-        response_id       = response.get('id')
-        pred = regressor.predict(response_features)
+        response_features = response['body']
+        response_id       = response['id']
+        pred = regressor.predict(np.array(response_features).reshape(1, -1))
         message_pred = {
             'id': response_id,
-            'body': pred[0], #.tolist()
+            'body': pred[0].tolist(), 
             }
         channel.basic_publish(exchange='',
                               routing_key='y_pred',

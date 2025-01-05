@@ -3,31 +3,29 @@ import json
 import pandas as pd
 import os.path
 
-def logging_csv(id, value, queue):
+def logging_csv(id, value, queuee):
     file_path = './logs/metric_log.csv'
     if os.path.exists(file_path):
         df = pd.read_csv(file_path)
     else:
         df = pd.DataFrame(columns=['id', 'y_true', 'y_pred', 'absolute_error'])
-    print(queue)
+
     # Проверка наличия записи
     id_ = df['id'] == id
     if any(id_):
-        if queue == 'y_true':
+        if queuee == 'y_true':
             df.loc[id_, 'y_true'] = value
             df.loc[id_, 'absolute_error'] = abs(value - df.loc[id_, 'y_pred'])
-        elif queue_ == 'y_pred':
+        elif queuee == 'y_pred':
             df.loc[id_, 'y_pred'] = value
             df.loc[id_, 'absolute_error'] = abs(df.loc[id_, 'y_true']-value)
-        else:
-            print(f'Очередь {queue}')
-            return    
-
+       # else:
+            #print(f'Очередь {queuee}')
     else:
         df.loc[len(df)] = [
             id,
-            value if queue == 'y_true' else None,
-            value if queue == 'y_pred' else None,
+            value if queuee == 'y_true' else None,
+            value if queuee == 'y_pred' else None,
             None
         ]
 
@@ -50,10 +48,10 @@ try:
             log.write(answer_string +'\n')
         
         response    = json.loads(body.decode('utf-8'))
-        response_y  = response.get('body')
-        response_id = response.get('id')
-        logging_csv(response_id, response_y, method.routing_key)
-        #logging_csv(response_id, response_y, 'y_true' if method.routing_key == 'y_true' else 'y_pred')
+        response_y  = response['body']
+        response_id = response['id']
+        #logging_csv(response_id, response_y, method.routing_key)
+        logging_csv(response_id, response_y, 'y_true' if method.routing_key == 'y_true' else 'y_pred')
 
   
  
